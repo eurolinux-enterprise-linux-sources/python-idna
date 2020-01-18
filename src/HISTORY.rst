@@ -3,13 +3,45 @@
 History
 -------
 
+2.4 (2017-03-01)
+++++++++++++++++
+
+- Restore IDNAError to be a subclass of UnicodeError, as some users of
+  this library are only looking for the latter to catch invalid strings.
+
+2.3 (2017-02-28)
+++++++++++++++++
+
+- Fix bugs relating to deriving IDNAError from UnicodeError.
+- More memory footprint improvements (Thanks, Alex Gaynor)
+
+2.2 (2016-12-21)
+++++++++++++++++
+
+- Made some changes to the UTS 46 data that should allow Jython to get around
+  64kb Java class limits. (Thanks, John A. Booth and Marcin Płonka.)
+- In Python 2.6, skip two tests that rely on data not present in that
+  Python version's unicodedata module.
+- Use relative imports to help downstream users.
+
+2.1 (2016-03-20)
+++++++++++++++++
+
+- Memory consumption optimizations. The library should consume significantly
+  less memory through smarter data structures being used to represent
+  relevant Unicode properties. Many thanks to Shivaram Lingamneni for this
+  patch.
+- Patches to make library work better with Python 2.6. The core library
+  currently works however the unit testing does not. (Thanks, Robert
+  Buchholz)
+- Better affix all Unicode codepoint properties to a specific version.
+
 2.0 (2015-05-18)
 ++++++++++++++++
 
 - Added support for Unicode IDNA Compatibility Processing (aka Unicode
   Technical Standard #46). Big thanks to Jon Ribbens who contributed this
   functionality.
-
 
 1.1 (2015-01-27)
 ++++++++++++++++

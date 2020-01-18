@@ -3,6 +3,7 @@ import bisect
 import unicodedata
 import re
 import sys
+from .intranges import intranges_contain
 
 _virama_combining_class = 9
 _alabel_prefix = b'xn--'
@@ -36,7 +37,7 @@ def _combining_class(cp):
     return unicodedata.combining(unichr(cp))
 
 def _is_script(cp, script):
-    return ord(cp) in idnadata.scripts[script]
+    return intranges_contain(ord(cp), idnadata.scripts[script])
 
 def _punycode(s):
     return s.encode('punycode')
@@ -155,9 +156,9 @@ def valid_contextj(label, pos):
         ok = False
         for i in range(pos-1, -1, -1):
             joining_type = idnadata.joining_types.get(ord(label[i]))
-            if joining_type == 'T':
+            if joining_type == ord('T'):
                 continue
-            if joining_type in ['L', 'D']:
+            if joining_type in [ord('L'), ord('D')]:
                 ok = True
                 break
 
@@ -167,9 +168,9 @@ def valid_contextj(label, pos):
         ok = False
         for i in range(pos+1, len(label)):
             joining_type = idnadata.joining_types.get(ord(label[i]))
-            if joining_type == 'T':
+            if joining_type == ord('T'):
                 continue
-            if joining_type in ['R', 'D']:
+            if joining_type in [ord('R'), ord('D')]:
                 ok = True
                 break
         return ok
@@ -240,12 +241,12 @@ def check_label(label):
 
     for (pos, cp) in enumerate(label):
         cp_value = ord(cp)
-        if cp_value in idnadata.codepoint_classes['PVALID']:
+        if intranges_contain(cp_value, idnadata.codepoint_classes['PVALID']):
             continue
-        elif cp_value in idnadata.codepoint_classes['CONTEXTJ']:
+        elif intranges_contain(cp_value, idnadata.codepoint_classes['CONTEXTJ']):
             if not valid_contextj(label, pos):
                 raise InvalidCodepointContext('Joiner {0} not allowed at position {1} in {2}'.format(_unot(cp_value), pos+1, repr(label)))
-        elif cp_value in idnadata.codepoint_classes['CONTEXTO']:
+        elif intranges_contain(cp_value, idnadata.codepoint_classes['CONTEXTO']):
             if not valid_contexto(label, pos):
                 raise InvalidCodepointContext('Codepoint {0} not allowed at position {1} in {2}'.format(_unot(cp_value), pos+1, repr(label)))
         else:
@@ -260,12 +261,12 @@ def alabel(label):
         label = label.encode('ascii')
         try:
             ulabel(label)
-        except:
+        except IDNAError:
             raise IDNAError('The label {0} is not a valid A-label'.format(label))
         if not valid_label_length(label):
             raise IDNAError('Label too long')
         return label
-    except UnicodeError:
+    except UnicodeEncodeError:
         pass
 
     if not label:
@@ -287,7 +288,7 @@ def ulabel(label):
     if not isinstance(label, (bytes, bytearray)):
         try:
             label = label.encode('ascii')
-        except UnicodeError:
+        except UnicodeEncodeError:
             check_label(label)
             return label
 

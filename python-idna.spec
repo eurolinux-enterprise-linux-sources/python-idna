@@ -5,7 +5,7 @@
 %global srcname idna
 
 Name:           python-%{srcname}
-Version:        2.0
+Version:        2.4
 Release:        1%{?dist}
 Summary:        Internationalized Domain Names in Applications (IDNA)
 
@@ -105,5 +105,14 @@ popd
 %endif # with_python3
 
 %changelog
+* Wed Mar 01 2017 Paul Wouters <pwouters@redhat.com> - 2.4-1
+- Resolves: rhbz#1425154 (2.3 broke API and upstream released 2.4)
+
+* Tue Feb 28 2017 Paul Wouters <pwouters@redhat.com> - 2.3-1
+- Resolves: rhbz#1425154 Rebase python-idna (more memfixes)
+
+* Thu Feb 23 2017 Paul Wouters <pwouters@redhat.com> - 2.2-1
+- Resolves: rhbz#1425154 Rebase python-idna to >= 2.1 for freeipa performance issue
+
 * Thu Apr 07 2016 Paul Wouters <pwouters@redhat.com> - 2.0-1
 - Resolves: rhbz#1297583 New package: python-idna
